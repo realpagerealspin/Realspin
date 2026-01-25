@@ -13,7 +13,7 @@ interface Topic {
 interface SpinWheelProps {
   segments: Topic[];
   onSpinComplete: (result: string) => void;
-  LogosComponent?: React.ComponentType;
+  LogosComponent?: React.ComponentType<{ fullscreen?: boolean }>;
   onRepopulateWheel?: () => void; // Add this prop
   historyCount?: number; // Add this prop
 }
