@@ -14,11 +14,12 @@ interface SpinWheelProps {
   segments: Topic[];
   onSpinComplete: (result: string) => void;
   LogosComponent?: React.ComponentType<{ fullscreen?: boolean }>;
-  onRepopulateWheel?: () => void; // Add this prop
-  historyCount?: number; // Add this prop
+  onRepopulateWheel?: () => void;
+  historyCount?: number;
+  prideMode?: boolean;
 }
 
-const COLORS = [
+const DEFAULT_COLORS = [
   '#0C2340', // realpage-blue-dark
   '#7DD3C0', // realpage-teal-light
   '#5DBEAA', // realpage-teal
@@ -26,7 +27,17 @@ const COLORS = [
   '#D4D4D4', // realpage-gray-light
 ];
 
-export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopulateWheel, historyCount = 0 }: SpinWheelProps) {
+const PRIDE_COLORS = [
+  '#E40303', // Red
+  '#FF8C00', // Orange
+  '#FFED00', // Yellow
+  '#008026', // Green
+  '#004DFF', // Blue
+  '#750787', // Purple
+];
+
+export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopulateWheel, historyCount = 0, prideMode = false }: SpinWheelProps) {
+  const COLORS = prideMode ? PRIDE_COLORS : DEFAULT_COLORS;
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [selectedSegment, setSelectedSegment] = useState<Topic | null>(null);
@@ -209,12 +220,15 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
         )}
 
         <div
-          className={`relative rounded-full bg-white/5 backdrop-blur-sm border-4 border-realpage-teal/50 shadow-2xl flex items-center justify-center transition-all duration-300 ${isSpinning ? 'scale-105' : 'scale-100'}`}
+          className={`relative rounded-full bg-white/5 backdrop-blur-sm border-4 shadow-2xl flex items-center justify-center transition-all duration-300 ${isSpinning ? 'scale-105' : 'scale-100'} ${prideMode ? 'pride-wheel-glow' : ''}`}
           style={{
             width: wheelSize,
             height: wheelSize,
             margin: isFullscreen ? 'auto' : undefined,
-            boxShadow: '0 0 20px rgba(125, 211, 192, 0.3), 0 0 40px rgba(125, 211, 192, 0.2), 0 0 60px rgba(125, 211, 192, 0.1)',
+            borderColor: prideMode ? '#FF8C00' : 'rgba(125, 211, 192, 0.5)',
+            boxShadow: prideMode
+              ? undefined
+              : '0 0 20px rgba(125, 211, 192, 0.3), 0 0 40px rgba(125, 211, 192, 0.2), 0 0 60px rgba(125, 211, 192, 0.1)',
           }}
         >
           <motion.div
@@ -236,8 +250,10 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                 height: 0,
                 borderLeft: `${Math.round(wheelSize * 0.03)}px solid transparent`,
                 borderRight: `${Math.round(wheelSize * 0.03)}px solid transparent`,
-                borderBottom: `${Math.round(wheelSize * 0.045)}px solid #7DD3C0`,
-                filter: 'drop-shadow(0 4px 12px rgba(125, 211, 192, 0.8))',
+                borderBottom: `${Math.round(wheelSize * 0.045)}px solid ${prideMode ? '#FFED00' : '#7DD3C0'}`,
+                filter: prideMode
+                  ? 'drop-shadow(0 4px 16px rgba(255,237,0,0.9))'
+                  : 'drop-shadow(0 4px 12px rgba(125, 211, 192, 0.8))',
               }}
             ></div>
           </motion.div>
@@ -394,13 +410,13 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                 cy={center}
                 r={Math.max(80, wheelSize * 0.13)}
                 fill="url(#center-gradient)"
-                stroke="#7DD3C0"
+                stroke={prideMode ? '#FFED00' : '#7DD3C0'}
                 strokeWidth={Math.max(6, wheelSize * 0.008)}
               />
               <defs>
                 <linearGradient id="center-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style={{ stopColor: '#0C2340', stopOpacity: 1 }} />
-                  <stop offset="100%" style={{ stopColor: '#7DD3C0', stopOpacity: 1 }} />
+                  <stop offset="0%" style={{ stopColor: prideMode ? '#1a0533' : '#0C2340', stopOpacity: 1 }} />
+                  <stop offset="100%" style={{ stopColor: prideMode ? '#750787' : '#7DD3C0', stopOpacity: 1 }} />
                 </linearGradient>
               </defs>
             </svg>
@@ -424,13 +440,21 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                   animate={{ scale: 1, opacity: 1, y: 0 }}
                   exit={{ scale: 0.5, opacity: 0, y: 50 }}
                   transition={{ type: "spring", duration: 0.6, bounce: 0.4 }}
-                  className="relative bg-gradient-to-br from-realpage-blue-dark via-realpage-blue to-realpage-blue-darker backdrop-blur-xl px-12 md:px-16 py-12 md:py-14 rounded-3xl border-8 border-realpage-teal shadow-2xl max-w-3xl w-[95%] md:w-[90%]"
-                  style={{ boxShadow: '0 0 60px rgba(125, 211, 192, 0.4)' }}
+                  className="relative backdrop-blur-xl px-12 md:px-16 py-12 md:py-14 rounded-3xl border-8 shadow-2xl max-w-3xl w-[95%] md:w-[90%]"
+                  style={{
+                    background: prideMode
+                      ? 'linear-gradient(135deg, #1a0533, #12003a, #0d0025)'
+                      : 'linear-gradient(135deg, #0C2340, #00205B, #071B2F)',
+                    borderColor: prideMode ? '#FF8C00' : '#5DBEAA',
+                    boxShadow: prideMode
+                      ? '0 0 60px rgba(228,3,3,0.4), 0 0 120px rgba(117,7,135,0.2)'
+                      : '0 0 60px rgba(125, 211, 192, 0.4)',
+                  }}
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-realpage-teal/20 rounded-3xl"></div>
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(125,211,192,0.1),transparent_50%)] rounded-3xl"></div>
-                  
+
                   {/* Countdown Timer - Inside popup at top-left to avoid close button */}
                   <div className="absolute top-4 left-4 z-10">
                     <div className="relative">
@@ -439,7 +463,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                           cx="32"
                           cy="32"
                           r="28"
-                          stroke="rgba(125, 211, 192, 0.2)"
+                          stroke={prideMode ? 'rgba(255,237,0,0.2)' : 'rgba(125, 211, 192, 0.2)'}
                           strokeWidth="6"
                           fill="none"
                         />
@@ -447,7 +471,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                           cx="32"
                           cy="32"
                           r="28"
-                          stroke="#7DD3C0"
+                          stroke={prideMode ? '#FFED00' : '#7DD3C0'}
                           strokeWidth="6"
                           fill="none"
                           strokeDasharray={176}
@@ -459,7 +483,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                         />
                       </svg>
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-xl font-black text-realpage-teal drop-shadow-lg">
+                        <span className="text-xl font-black drop-shadow-lg" style={{ color: prideMode ? '#FFED00' : '#7DD3C0' }}>
                           {countdown}
                         </span>
                       </div>
@@ -473,7 +497,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                   >
                     <X className="w-8 h-8" />
                   </button>
-                  
+
                   <div className="relative text-center space-y-6">
                     <motion.div
                       initial={{ scale: 0 }}
@@ -507,7 +531,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                         {selectedSegment.description}
                       </motion.div>
                     )}
-                    
+
                     {/* Show Answer section */}
                     {selectedSegment.answers && (
                       <motion.div
@@ -517,14 +541,28 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                         className="mt-6"
                       >
                         {showAnswer ? (
-                          <div className="bg-realpage-teal/20 border-2 border-realpage-teal-light rounded-xl p-6">
-                            <p className="text-realpage-teal-light font-bold text-base uppercase mb-3 tracking-wider">Answer:</p>
+                          <div
+                            className="border-2 rounded-xl p-6"
+                            style={{
+                              background: prideMode ? 'rgba(228,3,3,0.15)' : 'rgba(93,190,170,0.2)',
+                              borderColor: prideMode ? '#FF8C00' : '#7DD3C0',
+                            }}
+                          >
+                            <p className="font-bold text-base uppercase mb-3 tracking-wider" style={{ color: prideMode ? '#FFED00' : '#7DD3C0' }}>Answer:</p>
                             <p className="text-white text-lg md:text-xl font-semibold leading-relaxed">{selectedSegment.answers}</p>
                           </div>
                         ) : (
                           <button
                             onClick={() => setShowAnswer(true)}
-                            className="px-8 py-4 bg-gradient-to-r from-realpage-teal to-realpage-teal-dark hover:from-realpage-teal-light hover:to-realpage-teal text-white font-bold rounded-xl transition-all hover:scale-105 active:scale-95 shadow-2xl border-2 border-realpage-teal-light/50"
+                            className="px-8 py-4 text-white font-bold rounded-xl transition-all hover:scale-105 active:scale-95 shadow-2xl border-2"
+                            style={{
+                              background: prideMode
+                                ? 'linear-gradient(90deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787)'
+                                : 'linear-gradient(90deg, #5DBEAA, #3D9A88)',
+                              backgroundSize: prideMode ? '200% 100%' : undefined,
+                              animation: prideMode ? 'btn-pride-gradient 4s linear infinite' : undefined,
+                              borderColor: prideMode ? 'rgba(255,237,0,0.5)' : 'rgba(125,211,192,0.5)',
+                            }}
                           >
                             Show Answer
                           </button>
@@ -566,8 +604,16 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.5, opacity: 0, y: 50 }}
                 transition={{ type: "spring", duration: 0.6, bounce: 0.4 }}
-                className="relative bg-gradient-to-br from-realpage-blue-dark via-realpage-blue to-realpage-blue-darker backdrop-blur-xl px-12 md:px-16 py-12 md:py-14 rounded-3xl border-8 border-realpage-teal shadow-2xl max-w-3xl w-[95%] md:w-[90%]"
-                style={{ boxShadow: '0 0 60px rgba(125, 211, 192, 0.4)' }}
+                className="relative backdrop-blur-xl px-12 md:px-16 py-12 md:py-14 rounded-3xl border-8 shadow-2xl max-w-3xl w-[95%] md:w-[90%]"
+                style={{
+                  background: prideMode
+                    ? 'linear-gradient(135deg, #1a0533, #12003a, #0d0025)'
+                    : 'linear-gradient(135deg, #0C2340, #00205B, #071B2F)',
+                  borderColor: prideMode ? '#FF8C00' : '#5DBEAA',
+                  boxShadow: prideMode
+                    ? '0 0 60px rgba(228,3,3,0.4), 0 0 120px rgba(117,7,135,0.2)'
+                    : '0 0 60px rgba(125, 211, 192, 0.4)',
+                }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-realpage-teal/20 rounded-3xl"></div>
@@ -581,7 +627,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                         cx="32"
                         cy="32"
                         r="28"
-                        stroke="rgba(125, 211, 192, 0.2)"
+                        stroke={prideMode ? 'rgba(255,237,0,0.2)' : 'rgba(125, 211, 192, 0.2)'}
                         strokeWidth="6"
                         fill="none"
                       />
@@ -589,7 +635,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                         cx="32"
                         cy="32"
                         r="28"
-                        stroke="#7DD3C0"
+                        stroke={prideMode ? '#FFED00' : '#7DD3C0'}
                         strokeWidth="6"
                         fill="none"
                         strokeDasharray={176}
@@ -601,7 +647,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-xl font-black text-realpage-teal drop-shadow-lg">
+                      <span className="text-xl font-black drop-shadow-lg" style={{ color: prideMode ? '#FFED00' : '#7DD3C0' }}>
                         {countdown}
                       </span>
                     </div>
@@ -661,14 +707,28 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                       className="mt-6"
                     >
                       {showAnswer ? (
-                        <div className="bg-realpage-teal/20 border-2 border-realpage-teal-light rounded-xl p-6">
-                          <p className="text-realpage-teal-light font-bold text-base uppercase mb-3 tracking-wider">Answer:</p>
+                        <div
+                          className="border-2 rounded-xl p-6"
+                          style={{
+                            background: prideMode ? 'rgba(228,3,3,0.15)' : 'rgba(93,190,170,0.2)',
+                            borderColor: prideMode ? '#FF8C00' : '#7DD3C0',
+                          }}
+                        >
+                          <p className="font-bold text-base uppercase mb-3 tracking-wider" style={{ color: prideMode ? '#FFED00' : '#7DD3C0' }}>Answer:</p>
                           <p className="text-white text-lg md:text-xl font-semibold leading-relaxed">{selectedSegment.answers}</p>
                         </div>
                       ) : (
                         <button
                           onClick={() => setShowAnswer(true)}
-                          className="px-8 py-4 bg-gradient-to-r from-realpage-teal to-realpage-teal-dark hover:from-realpage-teal-light hover:to-realpage-teal text-white font-bold rounded-xl transition-all hover:scale-105 active:scale-95 shadow-2xl border-2 border-realpage-teal-light/50"
+                          className="px-8 py-4 text-white font-bold rounded-xl transition-all hover:scale-105 active:scale-95 shadow-2xl border-2"
+                          style={{
+                            background: prideMode
+                              ? 'linear-gradient(90deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787)'
+                              : 'linear-gradient(90deg, #5DBEAA, #3D9A88)',
+                            backgroundSize: prideMode ? '200% 100%' : undefined,
+                            animation: prideMode ? 'btn-pride-gradient 4s linear infinite' : undefined,
+                            borderColor: prideMode ? 'rgba(255,237,0,0.5)' : 'rgba(125,211,192,0.5)',
+                          }}
                         >
                           Show Answer
                         </button>

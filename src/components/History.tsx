@@ -8,13 +8,24 @@ interface Topic {
 
 interface HistoryProps {
   history: Topic[];
+  prideMode?: boolean;
 }
 
-export function History({ history }: HistoryProps) {
+export function History({ history, prideMode = false }: HistoryProps) {
   if (history.length === 0) return null;
 
   return (
-    <div className="relative bg-gradient-to-br from-realpage-blue/40 via-realpage-blue-dark/60 to-realpage-blue/40 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border-2 border-realpage-teal/40 hover:border-realpage-teal/60 transition-all">
+    <div
+      className="relative backdrop-blur-xl rounded-2xl p-6 shadow-2xl transition-all"
+      style={{
+        background: prideMode
+          ? 'linear-gradient(135deg, rgba(26,5,51,0.7), rgba(13,26,58,0.8), rgba(18,0,58,0.7))'
+          : 'linear-gradient(135deg, rgba(0,32,91,0.4), rgba(12,35,64,0.6), rgba(0,32,91,0.4))',
+        border: prideMode
+          ? '2px solid rgba(255,107,203,0.45)'
+          : '2px solid rgba(93,190,170,0.4)',
+      }}
+    >
       <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(125,211,192,0.1),transparent_50%)] rounded-2xl"></div>
 
@@ -41,12 +52,25 @@ export function History({ history }: HistoryProps) {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {index === 0 && (
-                        <Trophy className="w-6 h-6 text-realpage-teal animate-pulse drop-shadow-lg" />
+                        <Trophy
+                          className="w-6 h-6 animate-pulse drop-shadow-lg"
+                          style={{ color: prideMode ? '#FFED00' : '#5DBEAA' }}
+                        />
                       )}
-                      <span className={`font-semibold text-base ${index === 0 ? 'text-realpage-teal' : 'text-white'}`}>{item.name}</span>
+                      <span
+                        className={`font-semibold text-base`}
+                        style={{ color: index === 0 ? (prideMode ? '#FFED00' : '#5DBEAA') : '#fff' }}
+                      >{item.name}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={`text-xs font-bold px-3 py-1.5 rounded-lg ${index === 0 ? 'bg-realpage-teal/20 text-realpage-teal border border-realpage-teal/30' : 'bg-white/5 text-white/50'}`}>
+                      <span
+                        className={`text-xs font-bold px-3 py-1.5 rounded-lg`}
+                        style={index === 0 ? {
+                          background: prideMode ? 'rgba(228,3,3,0.2)' : 'rgba(93,190,170,0.2)',
+                          color: prideMode ? '#FFED00' : '#5DBEAA',
+                          border: prideMode ? '1px solid rgba(255,237,0,0.3)' : '1px solid rgba(93,190,170,0.3)',
+                        } : { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)' }}
+                      >
                         #{history.length - index}
                       </span>
                     </div>

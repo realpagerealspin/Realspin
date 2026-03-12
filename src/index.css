@@ -2,6 +2,200 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   CSS VARIABLES — Default (RealPage) Theme
+   ============================================================ */
+:root {
+  --bg-primary:        #0C2340;
+  --bg-secondary:      #00205B;
+  --bg-tertiary:       #071B2F;
+  --accent-primary:    #5DBEAA;
+  --accent-light:      #7DD3C0;
+  --accent-dark:       #3D9A88;
+  --card-border:       rgba(93, 190, 170, 0.4);
+  --card-bg:           rgba(12, 35, 64, 0.4);
+  --btn-from:          #5DBEAA;
+  --btn-to:            #3D9A88;
+  --btn-hover-from:    #7DD3C0;
+  --btn-hover-to:      #5DBEAA;
+  --header-border:     #5DBEAA;
+  --wheel-glow:        rgba(125, 211, 192, 0.4);
+  --wheel-border:      #7DD3C0;
+  --timer-stroke:      #7DD3C0;
+  --timer-track:       rgba(125, 211, 192, 0.2);
+  --text-primary:      #ffffff;
+  --text-accent:       #7DD3C0;
+  --blob-color-1:      rgba(93, 190, 170, 0.15);
+  --blob-color-2:      rgba(125, 211, 192, 0.1);
+
+  /* Smooth transition speed for theme switching */
+  --theme-transition: 0.55s;
+}
+
+/* ============================================================
+   CSS VARIABLES — Pride Theme (applied via .pride-theme on root div)
+   ============================================================ */
+.pride-theme {
+  --bg-primary:        #1a0533;
+  --bg-secondary:      #12003a;
+  --bg-tertiary:       #0d0025;
+  --accent-primary:    #ff6bcb;
+  --accent-light:      #ffb3e6;
+  --accent-dark:       #d63fa8;
+  --card-border:       rgba(255, 107, 203, 0.5);
+  --card-bg:           rgba(26, 5, 51, 0.65);
+  --btn-from:          #E40303;
+  --btn-to:            #750787;
+  --btn-hover-from:    #FF8C00;
+  --btn-hover-to:      #004DFF;
+  --header-border:     transparent;
+  --wheel-glow:        rgba(228, 3, 3, 0.5);
+  --wheel-border:      #FF8C00;
+  --timer-stroke:      #FFED00;
+  --timer-track:       rgba(255, 237, 0, 0.2);
+  --text-primary:      #ffffff;
+  --text-accent:       #ffb3e6;
+  --blob-color-1:      rgba(228, 3, 3, 0.2);
+  --blob-color-2:      rgba(0, 77, 255, 0.2);
+}
+
+/* ============================================================
+   SMOOTH THEME TRANSITIONS
+   ============================================================ */
+.pride-theme,
+.pride-theme *:not(canvas):not(svg):not(path):not(circle) {
+  transition:
+    background-color var(--theme-transition) ease,
+    border-color var(--theme-transition) ease,
+    box-shadow var(--theme-transition) ease,
+    color var(--theme-transition) ease,
+    opacity var(--theme-transition) ease !important;
+}
+
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
+
+/* Slow-shifting rainbow gradient background */
+@keyframes rainbow-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Rotating rainbow glow ring around the wheel */
+@keyframes pride-glow-ring {
+  0%   { box-shadow: 0 0 30px 8px #E40303, 0 0 60px 16px rgba(228,3,3,0.3); }
+  17%  { box-shadow: 0 0 30px 8px #FF8C00, 0 0 60px 16px rgba(255,140,0,0.3); }
+  34%  { box-shadow: 0 0 30px 8px #FFED00, 0 0 60px 16px rgba(255,237,0,0.3); }
+  50%  { box-shadow: 0 0 30px 8px #008026, 0 0 60px 16px rgba(0,128,38,0.3); }
+  67%  { box-shadow: 0 0 30px 8px #004DFF, 0 0 60px 16px rgba(0,77,255,0.3); }
+  84%  { box-shadow: 0 0 30px 8px #750787, 0 0 60px 16px rgba(117,7,135,0.3); }
+  100% { box-shadow: 0 0 30px 8px #E40303, 0 0 60px 16px rgba(228,3,3,0.3); }
+}
+
+/* Button rainbow gradient animation */
+@keyframes btn-pride-gradient {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating background shapes */
+@keyframes float-shape {
+  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.6; }
+  50%       { transform: translateY(-30px) scale(1.05); opacity: 0.9; }
+}
+
+/* Pride header border shimmer */
+@keyframes pride-border-shimmer {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Pride Mode toggle button pulse */
+@keyframes pride-btn-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 16px 4px rgba(228,3,3,0.5); }
+  50%       { transform: scale(1.04); box-shadow: 0 0 28px 8px rgba(0,77,255,0.6); }
+}
+
+/* Normal float animation (already in tailwind but also needed here) */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* ============================================================
+   PRIDE-SPECIFIC UTILITY CLASSES
+   ============================================================ */
+
+/* Animated rainbow background */
+.pride-rainbow-bg {
+  background: linear-gradient(
+    135deg,
+    #E40303 0%,
+    #FF8C00 17%,
+    #FFED00 34%,
+    #008026 50%,
+    #004DFF 67%,
+    #750787 84%,
+    #E40303 100%
+  );
+  background-size: 300% 300%;
+  animation: rainbow-shift 8s ease infinite;
+}
+
+/* Wheel glow ring (pride mode only) */
+.pride-wheel-glow {
+  animation: pride-glow-ring 3s ease-in-out infinite !important;
+}
+
+/* Animated pride gradient for buttons */
+.pride-btn-animate {
+  background: linear-gradient(
+    90deg,
+    #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787, #E40303
+  );
+  background-size: 300% 100%;
+  animation: btn-pride-gradient 4s linear infinite;
+}
+
+/* Pride header border */
+.pride-header-border {
+  border-image: linear-gradient(90deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787) 1;
+  border-bottom-width: 4px;
+  border-bottom-style: solid;
+}
+
+/* Pride toggle button */
+.pride-toggle-btn {
+  background: linear-gradient(135deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787);
+  background-size: 300% 300%;
+  animation: pride-btn-pulse 2s ease-in-out infinite, btn-pride-gradient 4s linear infinite;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  border: 2px solid rgba(255,255,255,0.4);
+}
+
+/* Normal mode toggle button */
+.pride-toggle-btn-off {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+.pride-toggle-btn-off:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+}
+
+/* ============================================================
+   BASE LAYER
+   ============================================================ */
 @layer base {
   * {
     @apply antialiased;
@@ -15,6 +209,9 @@
   }
 }
 
+/* ============================================================
+   UTILITIES LAYER
+   ============================================================ */
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar,
   .scrollbar-thin::-webkit-scrollbar {
@@ -63,5 +260,31 @@
   .glow-blue {
     box-shadow: 0 0 20px rgba(0, 32, 91, 0.3),
                 0 0 40px rgba(0, 32, 91, 0.2);
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE — Fluid wheel & layout
+   ============================================================ */
+
+/* Wheel container scales via inline style already — these ensure layout wraps */
+@media (max-width: 1024px) {
+  .wheel-responsive-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Ensure pride toggle button doesn't overlap logos on very small screens */
+  .pride-toggle-fixed {
+    top: auto !important;
+    bottom: 16px !important;
+    right: 16px !important;
   }
 }
