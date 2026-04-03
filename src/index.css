@@ -152,7 +152,7 @@
     radial-gradient(900px circle at 12% 18%, rgba(255, 45, 149, 0.30), transparent 45%),
     radial-gradient(800px circle at 85% 20%, rgba(0, 128, 38, 0.20), transparent 40%),
     radial-gradient(720px circle at 75% 85%, rgba(77, 0, 255, 0.16), transparent 40%),
-    repeating-linear-gradient(120deg, rgba(255, 237, 0, 0.13) 0 14px, rgba(0, 77, 255, 0.10) 14px 28px),
+    /* Removed harsh diagonal lines for a cleaner look */
     linear-gradient(135deg, #1a0533 0%, #12003a 50%, #0d0025 100%);
 
   --modal-bg: linear-gradient(135deg, #1a0533 0%, #12003a 55%, #0d0025 100%);

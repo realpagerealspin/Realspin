@@ -219,54 +219,88 @@ function App() {
               {prideMode ? '✕ Pride Off' : '🌈 Pride Mode'}
             </button>
 
-            <div className="flex items-center justify-center gap-3 md:gap-4 mb-4">
-              <div className="animate-float hidden sm:block">
-                <Trophy
-                  className="w-8 h-8 md:w-12 md:h-12 drop-shadow-2xl filter brightness-110"
-                  style={{ color: prideMode ? '#FFED00' : '#5DBEAA' }}
-                />
-              </div>
-              <div className="text-center">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-tight">
-                  <span
-                    className={prideMode ? 'pride-rainbow-text' : 'text-realpage-teal drop-shadow-2xl'}
-                    style={prideMode ? {
-                      background: 'linear-gradient(90deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                      filter: 'drop-shadow(0 2px 8px rgba(228,3,3,0.4))',
-                    } : {}}
+            {/* Title and subtitle: Pride mode vs Normal mode */}
+            {prideMode ? (
+              <>
+                <div className="flex items-center justify-center gap-3 md:gap-4 mb-4">
+                  <div className="animate-float hidden sm:block">
+                    <Trophy
+                      className="w-8 h-8 md:w-12 md:h-12 drop-shadow-2xl filter brightness-110"
+                      style={{ color: '#FFED00' }}
+                    />
+                  </div>
+                  <div className="text-center">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-tight">
+                      <span
+                        className="pride-rainbow-text"
+                        style={{
+                          background: 'linear-gradient(90deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                          filter: 'drop-shadow(0 2px 8px rgba(228,3,3,0.4))',
+                        }}
+                      >
+                        Quiz Trivia
+                      </span>
+                    </h1>
+                  </div>
+                  <div className="animate-float hidden sm:block" style={{ animationDelay: '0.5s' }}>
+                    <Trophy
+                      className="w-8 h-8 md:w-12 md:h-12 drop-shadow-2xl filter brightness-110 transform scale-x-[-1]"
+                      style={{ color: '#FFED00' }}
+                    />
+                  </div>
+                </div>
+                {/* Pride mode: no subtitle pill */}
+                <div className="text-center space-y-2">
+                  {/* Empty for pride mode */}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-center gap-3 md:gap-4 mb-4">
+                  <div className="animate-float hidden sm:block">
+                    <Trophy
+                      className="w-8 h-8 md:w-12 md:h-12 drop-shadow-2xl filter brightness-110"
+                      style={{ color: '#5DBEAA' }}
+                    />
+                  </div>
+                  <div className="text-center">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-tight">
+                      <span
+                        className="text-realpage-teal drop-shadow-2xl"
+                      >
+                        Do You REAL-LY Know?
+                      </span>
+                    </h1>
+                  </div>
+                  <div className="animate-float hidden sm:block" style={{ animationDelay: '0.5s' }}>
+                    <Trophy
+                      className="w-8 h-8 md:w-12 md:h-12 drop-shadow-2xl filter brightness-110 transform scale-x-[-1]"
+                      style={{ color: '#5DBEAA' }}
+                    />
+                  </div>
+                </div>
+                <div className="text-center space-y-2">
+                  <div
+                    className="inline-flex items-center gap-3 px-4 md:px-6 py-2 md:py-2.5 rounded-full backdrop-blur-sm shadow-lg theme-pill theme-pill-accent"
                   >
-                    Do You REAL-LY Know?
-                  </span>
-                </h1>
-              </div>
-              <div className="animate-float hidden sm:block" style={{ animationDelay: '0.5s' }}>
-                <Trophy
-                  className="w-8 h-8 md:w-12 md:h-12 drop-shadow-2xl filter brightness-110 transform scale-x-[-1]"
-                  style={{ color: prideMode ? '#FFED00' : '#5DBEAA' }}
-                />
-              </div>
-            </div>
-
-            <div className="text-center space-y-2">
-              <div
-                className="inline-flex items-center gap-3 px-4 md:px-6 py-2 md:py-2.5 rounded-full backdrop-blur-sm shadow-lg theme-pill theme-pill-accent"
-              >
-                <div
-                  className="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full animate-pulse shadow-lg"
-                  style={{ background: prideMode ? '#FFED00' : '#5DBEAA' }}
-                />
-                <p className="text-lg md:text-xl lg:text-2xl font-bold text-white/95 tracking-wide">
-                  Career Elevate
-                </p>
-                <div
-                  className="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full animate-pulse shadow-lg"
-                  style={{ background: prideMode ? '#FF8C00' : '#5DBEAA' }}
-                />
-              </div>
-            </div>
+                    <div
+                      className="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full animate-pulse shadow-lg"
+                      style={{ background: '#5DBEAA' }}
+                    />
+                    <p className="text-lg md:text-xl lg:text-2xl font-bold text-white/95 tracking-wide">
+                      Career Elevate
+                    </p>
+                    <div
+                      className="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full animate-pulse shadow-lg"
+                      style={{ background: '#5DBEAA' }}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </header>
 
