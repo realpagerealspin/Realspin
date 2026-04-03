@@ -6,27 +6,86 @@
    CSS VARIABLES — Default (RealPage) Theme
    ============================================================ */
 :root {
-  --bg-primary:        #0C2340;
-  --bg-secondary:      #00205B;
-  --bg-tertiary:       #071B2F;
-  --accent-primary:    #5DBEAA;
-  --accent-light:      #7DD3C0;
-  --accent-dark:       #3D9A88;
-  --card-border:       rgba(93, 190, 170, 0.4);
-  --card-bg:           rgba(12, 35, 64, 0.4);
-  --btn-from:          #5DBEAA;
-  --btn-to:            #3D9A88;
-  --btn-hover-from:    #7DD3C0;
-  --btn-hover-to:      #5DBEAA;
-  --header-border:     #5DBEAA;
-  --wheel-glow:        rgba(125, 211, 192, 0.4);
-  --wheel-border:      #7DD3C0;
-  --timer-stroke:      #7DD3C0;
-  --timer-track:       rgba(125, 211, 192, 0.2);
-  --text-primary:      #ffffff;
-  --text-accent:       #7DD3C0;
-  --blob-color-1:      rgba(93, 190, 170, 0.15);
-  --blob-color-2:      rgba(125, 211, 192, 0.1);
+  --bg-primary: #0C2340;
+  --bg-secondary: #00205B;
+  --bg-tertiary: #071B2F;
+
+  /* Normal accent palette (teal/cyan with warm pop) */
+  --accent-primary: #5DBEAA;
+  --accent-light: #7DD3C0;
+  --accent-cyan: #39E6FF;
+  --accent-dark: #3D9A88;
+  --accent-pop: #FF6B00;
+
+  /* Core surfaces */
+  --card-border: rgba(93, 190, 170, 0.45);
+  --card-bg: rgba(12, 35, 64, 0.48);
+  --panel-border: rgba(93, 190, 170, 0.48);
+  --panel-bg: rgba(12, 35, 64, 0.56);
+  --panel-shadow: 0 22px 70px rgba(0, 0, 0, 0.35);
+
+  /* Button gradient */
+  --btn-from: #5DBEAA;
+  --btn-to: #3D9A88;
+  --btn-hover-from: #7DD3C0;
+  --btn-hover-to: #5DBEAA;
+  --btn-gradient: linear-gradient(90deg, var(--btn-from) 0%, var(--btn-to) 100%);
+  --btn-gradient-hover: linear-gradient(90deg, var(--btn-hover-from) 0%, var(--btn-hover-to) 100%);
+  --btn-border: rgba(125, 211, 192, 0.55);
+  --btn-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  --btn-shadow-hover: 0 16px 55px rgba(0, 0, 0, 0.35);
+  --btn-text: #FFFFFF;
+  --btn-anim: none;
+  --btn-background-size: 200% 100%;
+
+  /* Danger buttons (consistent but still destructive) */
+  --danger-btn-gradient: linear-gradient(135deg, #FF2D55 0%, #FF6B00 100%);
+  --danger-btn-border: rgba(255, 107, 0, 0.55);
+
+  /* Success/neutral buttons */
+  --success-btn-gradient: linear-gradient(135deg, #2ED573 0%, #0ABF53 100%);
+  --success-btn-border: rgba(46, 213, 115, 0.55);
+  --neutral-btn-gradient: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%);
+  --neutral-btn-border: rgba(255, 255, 255, 0.22);
+
+  /* Header */
+  --header-border-bottom: rgba(93, 190, 170, 0.75);
+  --header-border-image: none;
+  --header-bg: linear-gradient(90deg, rgba(12, 35, 64, 0.92) 0%, rgba(0, 32, 91, 0.92) 55%, rgba(7, 27, 47, 0.92) 100%);
+
+  /* Wheel + timer */
+  --wheel-glow: rgba(125, 211, 192, 0.45);
+  --wheel-border: #7DD3C0;
+  --wheel-shadow: 0 0 20px rgba(125, 211, 192, 0.28), 0 0 45px rgba(125, 211, 192, 0.16), 0 0 70px rgba(125, 211, 192, 0.10);
+  --timer-stroke: #7DD3C0;
+  --timer-track: rgba(125, 211, 192, 0.22);
+
+  /* Text + focus */
+  --text-primary: #ffffff;
+  --text-accent: #7DD3C0;
+  --text-muted: rgba(255, 255, 255, 0.72);
+  --focus-ring: rgba(125, 211, 192, 0.95);
+
+  /* App background (kept distinct from pride) */
+  --app-background:
+    radial-gradient(1000px circle at 12% 15%, rgba(93, 190, 170, 0.28), transparent 45%),
+    radial-gradient(900px circle at 85% 18%, rgba(57, 230, 255, 0.18), transparent 40%),
+    radial-gradient(800px circle at 70% 85%, rgba(255, 107, 0, 0.12), transparent 40%),
+    linear-gradient(135deg, #0C2340 0%, #00205B 55%, #071B2F 100%);
+
+  /* Modal + edit highlights */
+  --modal-bg: linear-gradient(135deg, #0C2340 0%, #00205B 55%, #071B2F 100%);
+  --modal-border: rgba(93, 190, 170, 0.95);
+  --modal-shadow: 0 0 60px rgba(125, 211, 192, 0.35);
+  --edit-card-bg: rgba(255, 255, 255, 0.06);
+  --edit-card-border: rgba(125, 211, 192, 0.5);
+  --edit-card-focus: rgba(125, 211, 192, 0.65);
+
+  /* Inputs */
+  --input-bg: rgba(255, 255, 255, 0.06);
+  --input-border: rgba(255, 255, 255, 0.16);
+  --input-text: rgba(255, 255, 255, 0.92);
+  --input-placeholder: rgba(255, 255, 255, 0.58);
 
   /* Smooth transition speed for theme switching */
   --theme-transition: 0.55s;
@@ -36,27 +95,77 @@
    CSS VARIABLES — Pride Theme (applied via .pride-theme on root div)
    ============================================================ */
 .pride-theme {
-  --bg-primary:        #1a0533;
-  --bg-secondary:      #12003a;
-  --bg-tertiary:       #0d0025;
-  --accent-primary:    #ff6bcb;
-  --accent-light:      #ffb3e6;
-  --accent-dark:       #d63fa8;
-  --card-border:       rgba(255, 107, 203, 0.5);
-  --card-bg:           rgba(26, 5, 51, 0.65);
-  --btn-from:          #E40303;
-  --btn-to:            #750787;
-  --btn-hover-from:    #FF8C00;
-  --btn-hover-to:      #004DFF;
-  --header-border:     transparent;
-  --wheel-glow:        rgba(228, 3, 3, 0.5);
-  --wheel-border:      #FF8C00;
-  --timer-stroke:      #FFED00;
-  --timer-track:       rgba(255, 237, 0, 0.2);
-  --text-primary:      #ffffff;
-  --text-accent:       #ffb3e6;
-  --blob-color-1:      rgba(228, 3, 3, 0.2);
-  --blob-color-2:      rgba(0, 77, 255, 0.2);
+  --bg-primary: #1a0533;
+  --bg-secondary: #12003a;
+  --bg-tertiary: #0d0025;
+
+  /* Pride accent palette (vibrant rainbow) */
+  --accent-primary: #ff2d95;
+  --accent-light: #ffb3e6;
+  --accent-cyan: #33B6FF;
+  --accent-dark: #d63fa8;
+  --accent-pop: #FFED00;
+
+  --card-border: rgba(255, 107, 203, 0.55);
+  --card-bg: rgba(26, 5, 51, 0.68);
+  --panel-border: rgba(255, 107, 203, 0.6);
+  --panel-bg: rgba(26, 5, 51, 0.70);
+  --panel-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+
+  --btn-from: #E40303;
+  --btn-to: #750787;
+  --btn-hover-from: #FF8C00;
+  --btn-hover-to: #004DFF;
+  --btn-gradient: linear-gradient(90deg, #E40303 0%, #FF8C00 20%, #FFED00 40%, #008026 60%, #004DFF 80%, #750787 100%);
+  --btn-gradient-hover: linear-gradient(90deg, #FF8C00 0%, #FFED00 20%, #008026 40%, #004DFF 60%, #750787 80%, #E40303 100%);
+  --btn-border: rgba(255, 237, 0, 0.6);
+  --btn-shadow: 0 0 26px rgba(228, 3, 3, 0.16);
+  --btn-shadow-hover: 0 22px 65px rgba(0, 0, 0, 0.45);
+  --btn-text: #FFFFFF;
+  --btn-anim: btn-pride-gradient 4s linear infinite;
+  --btn-background-size: 300% 100%;
+
+  --danger-btn-gradient: linear-gradient(135deg, #FF2D55 0%, #FFED00 70%, #750787 130%);
+  --danger-btn-border: rgba(255, 45, 149, 0.6);
+
+  --success-btn-gradient: linear-gradient(135deg, #00E676 0%, #00B0FF 120%);
+  --success-btn-border: rgba(0, 230, 118, 0.55);
+  --neutral-btn-gradient: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.08) 100%);
+  --neutral-btn-border: rgba(255, 255, 255, 0.26);
+
+  --header-border-bottom: transparent;
+  --header-border-image: linear-gradient(90deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787) 1;
+  --header-bg: linear-gradient(90deg, rgba(26, 5, 51, 0.92) 0%, rgba(18, 0, 58, 0.92) 55%, rgba(13, 0, 37, 0.92) 100%);
+
+  --wheel-glow: rgba(228, 3, 3, 0.55);
+  --wheel-border: #FF8C00;
+  --wheel-shadow: none;
+  --timer-stroke: #FFED00;
+  --timer-track: rgba(255, 237, 0, 0.22);
+
+  --text-primary: #ffffff;
+  --text-accent: #ffb3e6;
+  --text-muted: rgba(255, 255, 255, 0.74);
+  --focus-ring: rgba(255, 237, 0, 0.98);
+
+  --app-background:
+    radial-gradient(900px circle at 12% 18%, rgba(255, 45, 149, 0.30), transparent 45%),
+    radial-gradient(800px circle at 85% 20%, rgba(0, 128, 38, 0.20), transparent 40%),
+    radial-gradient(720px circle at 75% 85%, rgba(77, 0, 255, 0.16), transparent 40%),
+    repeating-linear-gradient(120deg, rgba(255, 237, 0, 0.13) 0 14px, rgba(0, 77, 255, 0.10) 14px 28px),
+    linear-gradient(135deg, #1a0533 0%, #12003a 50%, #0d0025 100%);
+
+  --modal-bg: linear-gradient(135deg, #1a0533 0%, #12003a 55%, #0d0025 100%);
+  --modal-border: rgba(255, 237, 0, 0.98);
+  --modal-shadow: 0 0 70px rgba(228, 3, 3, 0.30), 0 0 110px rgba(117, 7, 135, 0.16);
+  --edit-card-bg: rgba(255, 179, 230, 0.10);
+  --edit-card-border: rgba(255, 140, 0, 0.55);
+  --edit-card-focus: rgba(255, 237, 0, 0.65);
+
+  --input-bg: rgba(255, 255, 255, 0.07);
+  --input-border: rgba(255, 237, 0, 0.25);
+  --input-text: rgba(255, 255, 255, 0.95);
+  --input-placeholder: rgba(255, 255, 255, 0.60);
 }
 
 /* ============================================================
@@ -99,6 +208,12 @@
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+/* Subtle neon breathing (used sparingly for hover/glow) */
+@keyframes glow-breathe {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.08) saturate(1.05); }
 }
 
 /* Floating background shapes */
@@ -169,8 +284,8 @@
 
 /* Pride toggle button */
 .pride-toggle-btn {
-  background: linear-gradient(135deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787);
-  background-size: 300% 300%;
+  background: var(--btn-gradient);
+  background-size: var(--btn-background-size);
   animation: pride-btn-pulse 2s ease-in-out infinite, btn-pride-gradient 4s linear infinite;
   color: #fff;
   font-weight: 800;
@@ -180,17 +295,154 @@
 
 /* Normal mode toggle button */
 .pride-toggle-btn-off {
-  background: rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, rgba(93,190,170,0.25) 0%, rgba(57,230,255,0.12) 45%, rgba(255,107,0,0.10) 100%);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 2px solid rgba(255, 255, 255, 0.2);
   color: #fff;
-  transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 .pride-toggle-btn-off:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(135deg, rgba(125,211,192,0.25) 0%, rgba(57,230,255,0.18) 40%, rgba(255,107,0,0.16) 100%);
   border-color: rgba(255, 255, 255, 0.4);
   transform: scale(1.05);
+}
+
+/* ============================================================
+   THEME UTILITIES (Normal + Pride)
+   ============================================================ */
+
+.app-shell {
+  background: var(--app-background);
+  transition: background 0.7s ease;
+}
+
+.app-header {
+  background: var(--header-bg);
+  border-bottom-width: 4px;
+  border-bottom-style: solid;
+  border-bottom-color: var(--header-border-bottom);
+  border-image: var(--header-border-image);
+  transition: background 0.7s ease, border-color 0.5s ease;
+}
+
+.theme-panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 1.5rem;
+  box-shadow: var(--panel-shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-panel::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background:
+    radial-gradient(900px circle at 15% 0%, rgba(255, 255, 255, 0.10), transparent 55%),
+    radial-gradient(700px circle at 95% 20%, rgba(255, 255, 255, 0.06), transparent 50%);
+  opacity: 0.85;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.theme-panel:hover::before {
+  opacity: 1;
+}
+
+.theme-panel > * {
+  z-index: 1;
+}
+
+.theme-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.875rem;
+  border: 2px solid var(--btn-border);
+  background: var(--btn-gradient);
+  background-size: var(--btn-background-size);
+  animation: var(--btn-anim);
+  color: var(--btn-text);
+  font-weight: 800;
+  box-shadow: var(--btn-shadow-hover);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.theme-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+  filter: saturate(1.1) brightness(1.06);
+}
+
+.theme-btn:active {
+  transform: translateY(0px) scale(0.98);
+}
+
+.theme-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.15), 0 0 0 6px var(--focus-ring), var(--btn-shadow-hover);
+}
+
+.theme-btn:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+  animation: none;
+}
+
+.theme-btn-danger {
+  background: var(--danger-btn-gradient);
+  border-color: var(--danger-btn-border);
+}
+
+.theme-btn-success {
+  background: var(--success-btn-gradient);
+  border-color: var(--success-btn-border);
+}
+
+.theme-btn-neutral {
+  background: var(--neutral-btn-gradient);
+  border-color: var(--neutral-btn-border);
+}
+
+.theme-input {
+  background: var(--input-bg);
+  color: var(--input-text);
+  border: 2px solid var(--input-border);
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, background-color 0.2s ease;
+  outline: none;
+}
+
+.theme-input::placeholder {
+  color: var(--input-placeholder);
+}
+
+.theme-input:focus {
+  border-color: var(--edit-card-focus);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.18), 0 0 0 6px rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.theme-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
+  padding: 0.35rem 1rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 12px 45px rgba(0, 0, 0, 0.22);
 }
 
 /* ============================================================
@@ -225,12 +477,14 @@
 
   .custom-scrollbar::-webkit-scrollbar-thumb,
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply bg-realpage-teal/50 rounded-full;
+    background: var(--panel-border);
+    border-radius: 9999px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover,
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    @apply bg-realpage-teal/70;
+    background: var(--panel-border);
+    filter: brightness(1.15);
   }
 
   .scrollbar-track-gray-200::-webkit-scrollbar-track {
@@ -286,5 +540,15 @@
     top: auto !important;
     bottom: 16px !important;
     right: 16px !important;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

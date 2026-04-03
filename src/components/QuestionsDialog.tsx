@@ -11,12 +11,13 @@ interface QuestionsDialogProps {
   open: boolean;
   onClose: () => void;
   onAddToWheel?: (question: Question) => void;
+  prideMode?: boolean;
 }
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY;
 
-export function QuestionsDialog({ open, onClose, onAddToWheel }: QuestionsDialogProps) {
+export function QuestionsDialog({ open, onClose, onAddToWheel, prideMode = false }: QuestionsDialogProps) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -154,16 +155,17 @@ export function QuestionsDialog({ open, onClose, onAddToWheel }: QuestionsDialog
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="theme-panel p-8 w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-realpage-blue flex items-center gap-2">
-            <List className="w-6 h-6 text-realpage-teal" />
+          <h2 className="text-2xl font-bold text-white/95 flex items-center gap-2">
+            <List className="w-6 h-6 text-white/95" />
             Questions Manager
           </h2>
           <button
             onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center text-white bg-red-500 hover:bg-red-600 font-bold text-2xl rounded-lg transition-all hover:scale-110 active:scale-95 shadow-lg"
+            className="w-10 h-10 flex items-center justify-center theme-btn theme-btn-danger rounded-full text-white font-bold text-2xl transition-all hover:scale-110 active:scale-95"
             title="Close"
+            type="button"
           >
             ×
           </button>
@@ -176,7 +178,7 @@ export function QuestionsDialog({ open, onClose, onAddToWheel }: QuestionsDialog
               value={newIndex}
               onChange={e => setNewIndex(e.target.value)}
               placeholder="Index #"
-              className="w-24 px-4 py-3 border-2 border-gray-300 focus:border-realpage-teal focus:outline-none rounded-xl text-gray-800 font-bold transition-all"
+              className="w-24 theme-input font-bold"
               min="1"
               required
             />
@@ -185,7 +187,7 @@ export function QuestionsDialog({ open, onClose, onAddToWheel }: QuestionsDialog
               value={newQuestion}
               onChange={e => setNewQuestion(e.target.value)}
               placeholder="Type a new question..."
-              className="flex-1 px-4 py-3 border-2 border-gray-300 focus:border-realpage-teal focus:outline-none rounded-xl text-gray-800 font-medium transition-all"
+              className="flex-1 theme-input font-medium"
               maxLength={200}
               required
             />
@@ -196,12 +198,12 @@ export function QuestionsDialog({ open, onClose, onAddToWheel }: QuestionsDialog
               value={newAnswer}
               onChange={e => setNewAnswer(e.target.value)}
               placeholder="Type the answer (optional)..."
-              className="flex-1 px-4 py-3 border-2 border-gray-300 focus:border-realpage-teal focus:outline-none rounded-xl text-gray-800 font-medium transition-all"
+              className="flex-1 theme-input font-medium"
               maxLength={500}
             />
             <button
               type="submit"
-              className="px-6 py-3 bg-gradient-to-r from-realpage-teal to-realpage-teal-dark hover:from-realpage-teal-light hover:to-realpage-teal text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="theme-btn px-6 py-3 rounded-xl font-bold"
               disabled={loading || !newQuestion.trim() || !newIndex.trim()}
             >
               Add
@@ -210,27 +212,37 @@ export function QuestionsDialog({ open, onClose, onAddToWheel }: QuestionsDialog
         </form>
         
         {loading ? (
-          <div className="text-center text-gray-500 py-8 font-semibold">Loading...</div>
+          <div className="text-center text-white/70 py-8 font-semibold">Loading...</div>
         ) : error ? (
-          <div className="text-center text-red-500 py-8 font-semibold">Error: {error}</div>
+          <div className="text-center text-white py-8 font-semibold" style={{ color: prideMode ? '#FFED00' : '#FF6B00' }}>
+            Error: {error}
+          </div>
         ) : (
-          <div className="space-y-3 flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-realpage-orange/50 scrollbar-track-gray-200">
+          <div className="space-y-3 flex-1 overflow-y-auto pr-2 scrollbar-thin">
             {questions.length === 0 ? (
-              <div className="text-center text-gray-400 py-12 font-semibold text-lg">No questions found. Add your first question above!</div>
+              <div className="text-center text-white/60 py-12 font-semibold text-lg">No questions found. Add your first question above!</div>
             ) : (
               questions.map((q) =>
                 editIndex === q.index ? (
-                  <form key={q.index} onSubmit={handleEditQuestion} className="p-4 rounded-xl bg-yellow-50 border-2 border-yellow-400 shadow-md">
+                  <form
+                    key={q.index}
+                    onSubmit={handleEditQuestion}
+                    className="p-4 rounded-xl border-2 shadow-md"
+                    style={{
+                      background: 'var(--edit-card-bg)',
+                      borderColor: 'var(--edit-card-border)',
+                    }}
+                  >
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-realpage-teal text-lg">#{q.index}</span>
-                        <span className="text-yellow-600 text-sm font-semibold">Editing...</span>
+                        <span className="font-bold text-white/95 text-lg">#{q.index}</span>
+                        <span className="text-white/70 text-sm font-semibold">Editing...</span>
                       </div>
                       <input
                         type="text"
                         value={editValue}
                         onChange={e => setEditValue(e.target.value)}
-                        className="flex-1 px-3 py-2 border-2 border-yellow-400 focus:border-yellow-500 focus:outline-none rounded-lg text-gray-800 font-medium"
+                        className="flex-1 theme-input font-medium"
                         maxLength={200}
                         placeholder="Edit question"
                         autoFocus
@@ -238,45 +250,65 @@ export function QuestionsDialog({ open, onClose, onAddToWheel }: QuestionsDialog
                       <textarea
                         value={editAnswer}
                         onChange={e => setEditAnswer(e.target.value)}
-                        className="flex-1 px-3 py-2 border-2 border-yellow-400 focus:border-yellow-500 focus:outline-none rounded-lg text-gray-800 font-medium resize-none"
+                        className="flex-1 theme-input font-medium resize-none"
                         maxLength={500}
                         rows={3}
                         placeholder="Edit answer (optional)"
                       />
                       <div className="flex gap-2 justify-end">
-                        <button type="submit" className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold transition-all hover:scale-105 active:scale-95 shadow-md">Save</button>
-                        <button type="button" className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-bold transition-all hover:scale-105 active:scale-95 shadow-md" onClick={() => { setEditIndex(null); setEditValue(''); setEditAnswer(''); }}>Cancel</button>
+                        <button type="submit" className="theme-btn theme-btn-success px-4 py-2 rounded-lg font-bold shadow-md">Save</button>
+                        <button
+                          type="button"
+                          className="theme-btn theme-btn-neutral px-4 py-2 rounded-lg font-bold shadow-md"
+                          onClick={() => { setEditIndex(null); setEditValue(''); setEditAnswer(''); }}
+                        >
+                          Cancel
+                        </button>
                       </div>
                     </div>
                   </form>
                 ) : (
-                  <div key={q.index} className="p-4 rounded-xl bg-realpage-blue/10 border border-realpage-teal/30 flex items-start gap-3">
+                  <div
+                    key={q.index}
+                    className="p-4 rounded-xl border flex items-start gap-3"
+                    style={{
+                      background: 'rgba(255,255,255,0.05)',
+                      borderColor: prideMode ? 'rgba(255,107,203,0.35)' : 'rgba(93,190,170,0.25)',
+                    }}
+                  >
                     <div className="flex-1">
-                      <div className="font-semibold text-realpage-teal text-lg">#{q.index}</div>
-                      <div className="text-gray-800 font-medium mt-1">Q: {q.question}</div>
+                      <div className="font-semibold text-white/95 text-lg">#{q.index}</div>
+                      <div className="text-white/80 font-medium mt-1">Q: {q.question}</div>
                       {q.answers && (
-                        <div className="text-realpage-teal-dark font-medium mt-2 bg-realpage-teal-light/20 p-2 rounded border border-realpage-teal/30">
+                        <div
+                          className="mt-2 p-2 rounded border font-medium"
+                          style={{
+                            background: prideMode ? 'rgba(255,237,0,0.10)' : 'rgba(125,211,192,0.12)',
+                            borderColor: prideMode ? 'rgba(255,140,0,0.35)' : 'rgba(125,211,192,0.25)',
+                            color: prideMode ? '#FFED00' : '#7DD3C0',
+                          }}
+                        >
                           <span className="font-bold">A:</span> {q.answers}
                         </div>
                       )}
                     </div>
                     <div className="flex flex-col gap-2">
                       <button
-                        className="px-3 py-1 bg-realpage-teal hover:bg-realpage-teal-dark text-white rounded-lg font-bold transition-all hover:scale-105 active:scale-95 text-sm"
+                        className="theme-btn px-3 py-1 rounded-lg font-bold text-sm"
                         onClick={() => handleEditClick(q)}
                         title="Edit question"
                       >
                         Edit
                       </button>
                       <button
-                        className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold transition-all hover:scale-105 active:scale-95 text-sm"
+                        className="theme-btn theme-btn-danger px-3 py-1 rounded-lg font-bold text-sm"
                         onClick={() => handleDeleteQuestion(q.index)}
                         title="Delete question"
                       >
                         Delete
                       </button>
                       <button
-                        className="px-3 py-1 bg-realpage-teal-dark hover:bg-realpage-teal text-white rounded-lg font-bold flex items-center justify-center gap-1 transition-all hover:scale-105 active:scale-95 text-sm"
+                        className="theme-btn px-3 py-1 rounded-lg font-bold flex items-center justify-center gap-1 text-sm"
                         title="Add to Wheel"
                         onClick={() => handleAddToWheel(q)}
                       >

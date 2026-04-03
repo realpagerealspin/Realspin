@@ -43,7 +43,6 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
   const [selectedSegment, setSelectedSegment] = useState<Topic | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
-  const [autoCloseTimeout, setAutoCloseTimeout] = useState<NodeJS.Timeout | null>(null);
   const [countdown, setCountdown] = useState(15); // 15 seconds timer
   const wheelRef = useRef<HTMLDivElement>(null);
 
@@ -140,8 +139,6 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
   // Auto-close winner overlay after 15 seconds, show answer for 3 seconds before closing
   useEffect(() => {
     if (selectedSegment) {
-      if (autoCloseTimeout) clearTimeout(autoCloseTimeout);
-
       setCountdown(15);
 
       let answerShown = false;
@@ -168,7 +165,6 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
         if (!answerShown) setShowAnswer(false);
       };
     }
-    if (autoCloseTimeout) clearTimeout(autoCloseTimeout);
   }, [selectedSegment]);
 
   return (
@@ -187,7 +183,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
         {!isFullscreen && (
           <button
             onClick={handleFullscreen}
-            className="absolute top-4 right-4 z-50 p-3 rounded-xl bg-realpage-teal/90 hover:bg-realpage-teal border-2 border-white/50 shadow-xl transition-all hover:scale-110 active:scale-95"
+            className="absolute top-4 right-4 z-50 p-3 rounded-xl theme-btn theme-btn-neutral shadow-xl transition-all hover:scale-110 active:scale-95"
             title="Fullscreen"
             type="button"
           >
@@ -198,7 +194,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
           <>
             <button
               onClick={handleFullscreen}
-              className="absolute top-4 right-4 z-[150] p-3 rounded-xl bg-realpage-teal/90 hover:bg-realpage-teal border-2 border-white/50 shadow-xl transition-all hover:scale-110 active:scale-95"
+              className="absolute top-4 right-4 z-[150] p-3 rounded-xl theme-btn theme-btn-neutral shadow-xl transition-all hover:scale-110 active:scale-95"
               title="Exit Fullscreen"
               type="button"
             >
@@ -209,7 +205,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
             {historyCount > 0 && onRepopulateWheel && (
               <button
                 onClick={onRepopulateWheel}
-                className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[150] px-6 py-3 rounded-xl bg-gradient-to-r from-realpage-teal to-realpage-teal-dark hover:from-realpage-teal-light hover:to-realpage-teal text-white font-bold shadow-xl transition-all hover:scale-105 active:scale-95 border-2 border-realpage-teal-light/50"
+                className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[150] px-6 py-3 rounded-xl theme-btn font-bold shadow-xl transition-all hover:scale-105 active:scale-95"
                 title="Restore all questions to wheel"
                 type="button"
               >
@@ -225,10 +221,8 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
             width: wheelSize,
             height: wheelSize,
             margin: isFullscreen ? 'auto' : undefined,
-            borderColor: prideMode ? '#FF8C00' : 'rgba(125, 211, 192, 0.5)',
-            boxShadow: prideMode
-              ? undefined
-              : '0 0 20px rgba(125, 211, 192, 0.3), 0 0 40px rgba(125, 211, 192, 0.2), 0 0 60px rgba(125, 211, 192, 0.1)',
+            borderColor: 'var(--wheel-border)',
+            boxShadow: 'var(--wheel-shadow)',
           }}
         >
           <motion.div
@@ -269,22 +263,11 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
             <motion.button
               onClick={handleSpin}
               disabled={isSpinning || segments.length === 0}
-              className={`
-                group relative rounded-full font-black text-lg
-                bg-gradient-to-br from-realpage-teal via-realpage-teal to-realpage-teal-dark
-                hover:from-realpage-teal-light hover:via-realpage-teal/90 hover:to-realpage-teal
-                disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed
-                transition-all duration-300
-                shadow-2xl
-                disabled:shadow-none
-                border-4 border-white/30
-                ${isSpinning ? 'animate-pulse-glow' : 'hover:scale-110 active:scale-95'}
-              `}
+              className={`theme-btn group relative rounded-full font-black text-lg transition-all duration-300 ${isSpinning ? 'animate-pulse-glow' : ''}`}
               style={{
                 width: Math.round(wheelSize * 0.18),
                 height: Math.round(wheelSize * 0.18),
                 fontSize: Math.max(18, Math.round(wheelSize * 0.025)),
-                boxShadow: isSpinning ? 'none' : '0 0 40px rgba(125, 211, 192, 0.6)',
               }}
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
@@ -308,7 +291,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                   </>
                 )}
               </span>
-              <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-realpage-teal to-white opacity-0 group-hover:opacity-40 blur-2xl transition-opacity -z-10"></div>
+              <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-white/0 via-white/25 to-white/0 opacity-0 group-hover:opacity-40 blur-2xl transition-opacity -z-10"></div>
             </motion.button>
           </div>
 
@@ -339,7 +322,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                 cy={center}
                 r={wheelRadius}
                 fill="url(#wheel-gradient)"
-                stroke="#7DD3C0"
+                stroke={prideMode ? '#FFED00' : '#7DD3C0'}
                 strokeWidth={Math.max(6, wheelSize * 0.008)}
                 filter="url(#shadow)"
               />
@@ -442,18 +425,21 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                   transition={{ type: "spring", duration: 0.6, bounce: 0.4 }}
                   className="relative backdrop-blur-xl px-12 md:px-16 py-12 md:py-14 rounded-3xl border-8 shadow-2xl max-w-3xl w-[95%] md:w-[90%]"
                   style={{
-                    background: prideMode
-                      ? 'linear-gradient(135deg, #1a0533, #12003a, #0d0025)'
-                      : 'linear-gradient(135deg, #0C2340, #00205B, #071B2F)',
-                    borderColor: prideMode ? '#FF8C00' : '#5DBEAA',
-                    boxShadow: prideMode
-                      ? '0 0 60px rgba(228,3,3,0.4), 0 0 120px rgba(117,7,135,0.2)'
-                      : '0 0 60px rgba(125, 211, 192, 0.4)',
+                    background: 'var(--modal-bg)',
+                    borderColor: 'var(--modal-border)',
+                    boxShadow: 'var(--modal-shadow)',
                   }}
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-realpage-teal/20 rounded-3xl"></div>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(125,211,192,0.1),transparent_50%)] rounded-3xl"></div>
+                  <div
+                    className="absolute inset-0 rounded-3xl"
+                    style={{
+                      background: prideMode
+                        ? 'radial-gradient(circle at 50% 50%, rgba(255,237,0,0.14), transparent 50%)'
+                        : 'radial-gradient(circle at 50% 50%, rgba(125,211,192,0.14), transparent 50%)',
+                    }}
+                  ></div>
 
                   {/* Countdown Timer - Inside popup at top-left to avoid close button */}
                   <div className="absolute top-4 left-4 z-10">
@@ -492,7 +478,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
 
                   <button
                     onClick={() => setSelectedSegment(null)}
-                    className="absolute -top-6 -right-6 p-4 rounded-full bg-gradient-to-br from-realpage-teal to-realpage-teal-dark text-white hover:from-realpage-teal-light hover:to-realpage-teal shadow-2xl transition-all hover:scale-110 active:scale-95 border-4 border-white z-10"
+                    className="absolute -top-6 -right-6 p-4 rounded-full theme-btn theme-btn-neutral text-white shadow-2xl transition-all hover:scale-110 active:scale-95 z-10"
                     aria-label="Close"
                   >
                     <X className="w-8 h-8" />
@@ -504,20 +490,41 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.2, type: "spring", bounce: 0.5 }}
                     >
-                      <div className="inline-flex items-center gap-3 mb-4 px-6 py-3 bg-white/5 rounded-full border border-realpage-teal/30">
-                        <div className="w-3 h-3 rounded-full bg-realpage-teal animate-pulse shadow-lg shadow-realpage-teal/50"></div>
+                      <div
+                        className="inline-flex items-center gap-3 mb-4 px-6 py-3 bg-white/5 rounded-full border"
+                        style={{
+                          borderColor: prideMode ? 'rgba(255,237,0,0.35)' : 'rgba(125,211,192,0.30)',
+                        }}
+                      >
+                        <div
+                          className="w-3 h-3 rounded-full animate-pulse shadow-lg"
+                          style={{
+                            backgroundColor: prideMode ? '#FFED00' : '#5DBEAA',
+                            boxShadow: prideMode ? '0 0 28px rgba(255,237,0,0.35)' : undefined,
+                          }}
+                        ></div>
                         <p className="text-xl md:text-2xl font-bold text-white/95 uppercase tracking-widest">
                           Question Time
                         </p>
-                        <div className="w-3 h-3 rounded-full bg-realpage-teal animate-pulse shadow-lg shadow-realpage-teal/50"></div>
+                        <div
+                          className="w-3 h-3 rounded-full animate-pulse shadow-lg"
+                          style={{
+                            backgroundColor: prideMode ? '#FFED00' : '#5DBEAA',
+                            boxShadow: prideMode ? '0 0 28px rgba(255,237,0,0.35)' : undefined,
+                          }}
+                        ></div>
                       </div>
                     </motion.div>
                     <motion.p
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.3 }}
-                      className="text-5xl md:text-7xl font-black text-realpage-teal break-words leading-tight drop-shadow-2xl"
-                      style={{ textShadow: '0 0 40px rgba(125, 211, 192, 0.6), 0 0 80px rgba(125, 211, 192, 0.3)' }}
+                      className="text-5xl md:text-7xl font-black text-white/95 break-words leading-tight drop-shadow-2xl"
+                      style={{
+                        textShadow: prideMode
+                          ? '0 0 40px rgba(255,237,0,0.65), 0 0 80px rgba(255,140,0,0.25)'
+                          : '0 0 40px rgba(125, 211, 192, 0.6), 0 0 80px rgba(125, 211, 192, 0.3)',
+                      }}
                     >
                       {selectedSegment.name}
                     </motion.p>
@@ -544,8 +551,8 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                           <div
                             className="border-2 rounded-xl p-6"
                             style={{
-                              background: prideMode ? 'rgba(228,3,3,0.15)' : 'rgba(93,190,170,0.2)',
-                              borderColor: prideMode ? '#FF8C00' : '#7DD3C0',
+                              background: prideMode ? 'rgba(255,237,0,0.14)' : 'rgba(125,211,192,0.18)',
+                              borderColor: prideMode ? 'rgba(255,140,0,0.65)' : '#7DD3C0',
                             }}
                           >
                             <p className="font-bold text-base uppercase mb-3 tracking-wider" style={{ color: prideMode ? '#FFED00' : '#7DD3C0' }}>Answer:</p>
@@ -554,15 +561,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                         ) : (
                           <button
                             onClick={() => setShowAnswer(true)}
-                            className="px-8 py-4 text-white font-bold rounded-xl transition-all hover:scale-105 active:scale-95 shadow-2xl border-2"
-                            style={{
-                              background: prideMode
-                                ? 'linear-gradient(90deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787)'
-                                : 'linear-gradient(90deg, #5DBEAA, #3D9A88)',
-                              backgroundSize: prideMode ? '200% 100%' : undefined,
-                              animation: prideMode ? 'btn-pride-gradient 4s linear infinite' : undefined,
-                              borderColor: prideMode ? 'rgba(255,237,0,0.5)' : 'rgba(125,211,192,0.5)',
-                            }}
+                            className="theme-btn px-8 py-4 font-bold rounded-xl shadow-2xl"
                           >
                             Show Answer
                           </button>
@@ -606,18 +605,21 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                 transition={{ type: "spring", duration: 0.6, bounce: 0.4 }}
                 className="relative backdrop-blur-xl px-12 md:px-16 py-12 md:py-14 rounded-3xl border-8 shadow-2xl max-w-3xl w-[95%] md:w-[90%]"
                 style={{
-                  background: prideMode
-                    ? 'linear-gradient(135deg, #1a0533, #12003a, #0d0025)'
-                    : 'linear-gradient(135deg, #0C2340, #00205B, #071B2F)',
-                  borderColor: prideMode ? '#FF8C00' : '#5DBEAA',
-                  boxShadow: prideMode
-                    ? '0 0 60px rgba(228,3,3,0.4), 0 0 120px rgba(117,7,135,0.2)'
-                    : '0 0 60px rgba(125, 211, 192, 0.4)',
+                  background: 'var(--modal-bg)',
+                  borderColor: 'var(--modal-border)',
+                  boxShadow: 'var(--modal-shadow)',
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-realpage-teal/20 rounded-3xl"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(125,211,192,0.1),transparent_50%)] rounded-3xl"></div>
+                <div
+                  className="absolute inset-0 rounded-3xl"
+                  style={{
+                    background: prideMode
+                      ? 'radial-gradient(circle at 50% 50%, rgba(255,140,0,0.16), transparent 50%)'
+                      : 'radial-gradient(circle at 50% 50%, rgba(125,211,192,0.14), transparent 50%)',
+                  }}
+                ></div>
 
                 {/* Countdown Timer - Inside popup at top-left to avoid close button */}
                 <div className="absolute top-4 left-4 z-10">
@@ -656,7 +658,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
 
                 <button
                   onClick={() => setSelectedSegment(null)}
-                  className="absolute -top-6 -right-6 p-4 rounded-full bg-gradient-to-br from-realpage-teal to-realpage-teal-dark text-white hover:from-realpage-teal-light hover:to-realpage-teal shadow-2xl transition-all hover:scale-110 active:scale-95 border-4 border-white z-10"
+                  className="absolute -top-6 -right-6 p-4 rounded-full theme-btn theme-btn-neutral text-white shadow-2xl transition-all hover:scale-110 active:scale-95 z-10"
                   aria-label="Close"
                 >
                   <X className="w-8 h-8" />
@@ -668,12 +670,29 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2, type: "spring", bounce: 0.5 }}
                   >
-                    <div className="inline-flex items-center gap-3 mb-4 px-6 py-3 bg-white/5 rounded-full border border-realpage-teal/30">
-                      <div className="w-3 h-3 rounded-full bg-realpage-teal animate-pulse shadow-lg shadow-realpage-teal/50"></div>
+                    <div
+                      className="inline-flex items-center gap-3 mb-4 px-6 py-3 bg-white/5 rounded-full border"
+                      style={{
+                        borderColor: prideMode ? 'rgba(255,237,0,0.35)' : 'rgba(125,211,192,0.30)',
+                      }}
+                    >
+                      <div
+                        className="w-3 h-3 rounded-full animate-pulse shadow-lg"
+                        style={{
+                          backgroundColor: prideMode ? '#FFED00' : '#5DBEAA',
+                          boxShadow: prideMode ? '0 0 28px rgba(255,237,0,0.35)' : undefined,
+                        }}
+                      ></div>
                       <p className="text-xl md:text-2xl font-bold text-white/95 uppercase tracking-widest">
                         Question Time
                       </p>
-                      <div className="w-3 h-3 rounded-full bg-realpage-teal animate-pulse shadow-lg shadow-realpage-teal/50"></div>
+                      <div
+                        className="w-3 h-3 rounded-full animate-pulse shadow-lg"
+                        style={{
+                          backgroundColor: prideMode ? '#FFED00' : '#5DBEAA',
+                          boxShadow: prideMode ? '0 0 28px rgba(255,237,0,0.35)' : undefined,
+                        }}
+                      ></div>
                     </div>
                   </motion.div>
 
@@ -681,8 +700,12 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="text-5xl md:text-7xl font-black text-realpage-teal break-words leading-tight drop-shadow-2xl"
-                    style={{ textShadow: '0 0 40px rgba(125, 211, 192, 0.6), 0 0 80px rgba(125, 211, 192, 0.3)' }}
+                    className="text-5xl md:text-7xl font-black text-white/95 break-words leading-tight drop-shadow-2xl"
+                    style={{
+                      textShadow: prideMode
+                        ? '0 0 40px rgba(255,237,0,0.65), 0 0 80px rgba(255,140,0,0.25)'
+                        : '0 0 40px rgba(125, 211, 192, 0.6), 0 0 80px rgba(125, 211, 192, 0.3)',
+                    }}
                   >
                     {selectedSegment.name}
                   </motion.p>
@@ -710,8 +733,8 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                         <div
                           className="border-2 rounded-xl p-6"
                           style={{
-                            background: prideMode ? 'rgba(228,3,3,0.15)' : 'rgba(93,190,170,0.2)',
-                            borderColor: prideMode ? '#FF8C00' : '#7DD3C0',
+                              background: prideMode ? 'rgba(255,237,0,0.14)' : 'rgba(125,211,192,0.18)',
+                              borderColor: prideMode ? 'rgba(255,140,0,0.65)' : '#7DD3C0',
                           }}
                         >
                           <p className="font-bold text-base uppercase mb-3 tracking-wider" style={{ color: prideMode ? '#FFED00' : '#7DD3C0' }}>Answer:</p>
@@ -720,15 +743,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                       ) : (
                         <button
                           onClick={() => setShowAnswer(true)}
-                          className="px-8 py-4 text-white font-bold rounded-xl transition-all hover:scale-105 active:scale-95 shadow-2xl border-2"
-                          style={{
-                            background: prideMode
-                              ? 'linear-gradient(90deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787)'
-                              : 'linear-gradient(90deg, #5DBEAA, #3D9A88)',
-                            backgroundSize: prideMode ? '200% 100%' : undefined,
-                            animation: prideMode ? 'btn-pride-gradient 4s linear infinite' : undefined,
-                            borderColor: prideMode ? 'rgba(255,237,0,0.5)' : 'rgba(125,211,192,0.5)',
-                          }}
+                          className="theme-btn px-8 py-4 font-bold rounded-xl shadow-2xl"
                         >
                           Show Answer
                         </button>

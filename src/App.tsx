@@ -11,7 +11,13 @@ interface Topic {
   answers?: string;
 }
 
-function Logos({ fullscreen = false }: { fullscreen?: boolean }) {
+/** Add your Pride-mode logo to `public/` with this exact filename (same position/size as Career Elevate). */
+const PRIDE_RIGHT_LOGO_SRC = '/PrideCareerElevate.png';
+
+function Logos({ fullscreen = false, prideMode = false }: { fullscreen?: boolean; prideMode?: boolean }) {
+  const rightLogoSrc = prideMode ? PRIDE_RIGHT_LOGO_SRC : '/CareerElevate.png';
+  const rightLogoAlt = prideMode ? 'Pride partner logo' : 'Career Elevate Logo';
+
   return (
     <>
       <img
@@ -32,8 +38,8 @@ function Logos({ fullscreen = false }: { fullscreen?: boolean }) {
         }}
       />
       <img
-        src="/CareerElevate.png"
-        alt="Career Elevate Logo"
+        src={rightLogoSrc}
+        alt={rightLogoAlt}
         className="object-contain rounded-lg"
         style={{
           height: fullscreen ? 'clamp(80px, 10vw, 180px)' : 'clamp(60px, 8vw, 140px)',
@@ -165,19 +171,9 @@ function App() {
     }
   };
 
-  const handleEditSegment = (index: number, updatedSegment: Topic) => {
-    setSegments(segments.map((seg, i) => (i === index ? updatedSegment : seg)));
-  };
-
   return (
     <div
-      className={`min-h-screen text-white overflow-x-hidden transition-all duration-700 ${prideMode ? 'pride-theme' : ''}`}
-      style={{
-        background: prideMode
-          ? 'linear-gradient(135deg, #1a0533 0%, #0d1a3a 30%, #12003a 60%, #0d0025 100%)'
-          : 'linear-gradient(135deg, #0C2340 0%, #00205B 50%, #071B2F 100%)',
-        transition: 'background 0.7s ease',
-      }}
+      className={`min-h-screen text-white overflow-x-hidden transition-all duration-700 app-shell ${prideMode ? 'pride-theme' : ''}`}
     >
       {/* ── Animated background blobs ── */}
       <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
@@ -201,23 +197,11 @@ function App() {
       <div className="relative z-10">
         {/* ── Header ── */}
         <header
-          className="relative py-8 px-4 shadow-2xl"
-          style={{
-            background: prideMode
-              ? 'linear-gradient(90deg, #1a0533, #12003a, #1a0533)'
-              : 'linear-gradient(90deg, #0C2340, #00205B, #071B2F)',
-            borderBottom: prideMode
-              ? '4px solid transparent'
-              : '4px solid #5DBEAA',
-            borderImage: prideMode
-              ? 'linear-gradient(90deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787) 1'
-              : undefined,
-            transition: 'background 0.7s ease, border-color 0.5s ease',
-          }}
+          className="relative py-8 px-4 shadow-2xl app-header"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
           <div className="container mx-auto relative">
-            <Logos />
+            <Logos prideMode={prideMode} />
 
             {/* ── 🌈 Pride Mode Toggle Button ── */}
             <button
@@ -268,16 +252,7 @@ function App() {
 
             <div className="text-center space-y-2">
               <div
-                className="inline-flex items-center gap-3 px-4 md:px-6 py-2 md:py-2.5 rounded-full backdrop-blur-sm shadow-lg"
-                style={{
-                  background: prideMode
-                    ? 'rgba(255,255,255,0.08)'
-                    : 'linear-gradient(90deg, rgba(255,255,255,0.1), rgba(93,190,170,0.2), rgba(255,255,255,0.1))',
-                  border: prideMode
-                    ? '2px solid rgba(255,107,203,0.4)'
-                    : '2px solid rgba(93,190,170,0.3)',
-                  transition: 'all 0.6s ease',
-                }}
+                className="inline-flex items-center gap-3 px-4 md:px-6 py-2 md:py-2.5 rounded-full backdrop-blur-sm shadow-lg theme-pill theme-pill-accent"
               >
                 <div
                   className="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full animate-pulse shadow-lg"
@@ -301,7 +276,7 @@ function App() {
               <SpinWheel
                 segments={segments}
                 onSpinComplete={handleSpinComplete}
-                LogosComponent={(props: any) => <Logos {...props} fullscreen />}
+                LogosComponent={(props: any) => <Logos {...props} prideMode={prideMode} />}
                 onRepopulateWheel={handleRepopulateWheel}
                 historyCount={history.length}
                 prideMode={prideMode}
@@ -311,21 +286,13 @@ function App() {
             <div className="space-y-6 w-full">
               <SegmentManager
                 onAddSegment={handleAddSegment}
+                prideMode={prideMode}
               />
 
               {/* Display current wheel segments with remove option */}
               {segments.length > 0 && (
                 <div
-                  className="relative backdrop-blur-xl rounded-2xl p-6 shadow-2xl transition-all"
-                  style={{
-                    background: prideMode
-                      ? 'linear-gradient(135deg, rgba(26,5,51,0.7), rgba(13,26,58,0.8), rgba(18,0,58,0.7))'
-                      : 'linear-gradient(135deg, rgba(0,32,91,0.4), rgba(12,35,64,0.6), rgba(0,32,91,0.4))',
-                    border: prideMode
-                      ? '2px solid rgba(255,107,203,0.45)'
-                      : '2px solid rgba(93,190,170,0.4)',
-                    transition: 'all 0.6s ease',
-                  }}
+                  className="theme-panel p-6"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl" />
 
@@ -334,18 +301,18 @@ function App() {
                       <h2 className="text-2xl font-bold text-white">Current Wheel</h2>
                       <button
                         onClick={handleClearAll}
-                        className="px-4 py-2 text-sm font-semibold bg-red-500/80 hover:bg-red-500 text-white rounded-xl transition-all border-2 border-red-400/50 hover:border-red-400 hover:scale-105 active:scale-95 shadow-lg"
+                        className="theme-btn theme-btn-danger px-4 py-2 text-sm font-semibold"
                         title="Clear all"
                       >
                         Clear All
                       </button>
                     </div>
 
-                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-realpage-teal/50 scrollbar-track-white/10">
+                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin">
                       {segments.map((segment, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between bg-white/5 backdrop-blur-sm px-4 py-3 rounded-xl border-2 border-white/10 hover:border-realpage-teal/50 transition-all group hover:bg-white/10 hover:shadow-lg"
+                          className="flex items-center justify-between bg-white/5 backdrop-blur-sm px-4 py-3 rounded-xl border-2 border-white/10 hover:border-white/25 transition-all group hover:bg-white/10 hover:shadow-lg"
                           style={prideMode ? { borderColor: 'rgba(255,107,203,0.25)' } : {}}
                         >
                           <div className="flex-1 min-w-0">
@@ -394,16 +361,7 @@ function App() {
               {/* Repopulate button when history exists */}
               {history.length > 0 && (
                 <div
-                  className="relative backdrop-blur-xl rounded-2xl p-6 shadow-2xl transition-all"
-                  style={{
-                    background: prideMode
-                      ? 'linear-gradient(135deg, rgba(26,5,51,0.7), rgba(18,0,58,0.8))'
-                      : 'linear-gradient(135deg, rgba(61,154,136,0.4), rgba(93,190,170,0.6), rgba(61,154,136,0.4))',
-                    border: prideMode
-                      ? '2px solid rgba(255,237,0,0.4)'
-                      : '2px solid rgba(125,211,192,0.4)',
-                    transition: 'all 0.6s ease',
-                  }}
+                  className="theme-panel p-6"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl" />
                   <div className="relative text-center">
@@ -413,16 +371,7 @@ function App() {
                     </p>
                     <button
                       onClick={handleRepopulateWheel}
-                      className="w-full px-6 py-3 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 border-2"
-                      style={{
-                        background: prideMode
-                          ? 'linear-gradient(90deg, #E40303, #FF8C00, #FFED00, #008026, #004DFF, #750787)'
-                          : 'linear-gradient(90deg, #5DBEAA, #3D9A88)',
-                        borderColor: prideMode ? 'rgba(255,237,0,0.5)' : 'rgba(125,211,192,0.5)',
-                        backgroundSize: prideMode ? '200% 100%' : undefined,
-                        animation: prideMode ? 'btn-pride-gradient 4s linear infinite' : undefined,
-                        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                      }}
+                      className="theme-btn w-full px-6 py-3 font-bold shadow-lg"
                     >
                       Restore All Questions to Wheel
                     </button>
