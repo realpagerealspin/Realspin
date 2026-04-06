@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { SpinWheel } from './components/SpinWheel';
 import { SegmentManager } from './components/SegmentManager';
@@ -12,11 +12,21 @@ interface Topic {
 }
 
 /** Add your Pride-mode logo to `public/` with this exact filename (same position/size as Career Elevate). */
-const PRIDE_RIGHT_LOGO_SRC = '/PrideCareerElevate.png';
+const PRIDE_RIGHT_LOGO_SRC = '/realpride_white.png';
 
-function Logos({ fullscreen = false, prideMode = false }: { fullscreen?: boolean; prideMode?: boolean }) {
+function Logos({
+  fullscreen = false,
+  prideMode = false,
+  onToggle,
+}: {
+  fullscreen?: boolean;
+  prideMode?: boolean;
+  onToggle?: () => void;
+}) {
   const rightLogoSrc = prideMode ? PRIDE_RIGHT_LOGO_SRC : '/CareerElevate.png';
-  const rightLogoAlt = prideMode ? 'Pride partner logo' : 'Career Elevate Logo';
+  const rightLogoAlt = prideMode
+    ? 'Switch to Career Elevate mode'
+    : 'Switch to Pride mode';
 
   return (
     <>
@@ -37,9 +47,12 @@ function Logos({ fullscreen = false, prideMode = false }: { fullscreen?: boolean
           filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3))',
         }}
       />
+      {/* Right logo doubles as the mode toggle */}
       <img
         src={rightLogoSrc}
         alt={rightLogoAlt}
+        title={prideMode ? 'Click to switch to Career Elevate mode' : 'Click to switch to Pride mode'}
+        onClick={onToggle}
         className="object-contain rounded-lg"
         style={{
           height: fullscreen ? 'clamp(80px, 10vw, 180px)' : 'clamp(60px, 8vw, 140px)',
@@ -50,8 +63,21 @@ function Logos({ fullscreen = false, prideMode = false }: { fullscreen?: boolean
           top: fullscreen ? '8px' : '4px',
           margin: 0,
           zIndex: 101,
-          pointerEvents: 'none',
+          cursor: onToggle ? 'pointer' : 'default',
           filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3))',
+          transition: 'transform 0.2s ease, filter 0.2s ease',
+        }}
+        onMouseEnter={e => {
+          if (onToggle) {
+            (e.currentTarget as HTMLImageElement).style.transform = 'scale(1.07)';
+            (e.currentTarget as HTMLImageElement).style.filter =
+              'drop-shadow(0 6px 18px rgba(0,0,0,0.45))';
+          }
+        }}
+        onMouseLeave={e => {
+          (e.currentTarget as HTMLImageElement).style.transform = 'scale(1)';
+          (e.currentTarget as HTMLImageElement).style.filter =
+            'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3))';
         }}
       />
     </>
@@ -59,53 +85,90 @@ function Logos({ fullscreen = false, prideMode = false }: { fullscreen?: boolean
 }
 
 function App() {
-  // Wheel starts empty
-  const [segments, setSegments] = useState<Topic[]>([]);
+  // ── Read initial mode first so we can load the right localStorage keys ──
+  const initialPrideMode = localStorage.getItem('prideMode') === 'true';
 
-  // Persist names of topics permanently removed via the UI (clicking X)
+  // Each mode has its own isolated wheel state in localStorage:
+  //   Career Elevate → keys ending in '_career'
+  //   Pride mode     → keys ending in '_pride'
+
+  const [segments, setSegments] = useState<Topic[]>(() => {
+    const key = initialPrideMode ? 'wheelSegments_pride' : 'wheelSegments_career';
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [removedTopics, setRemovedTopics] = useState<string[]>(() => {
-    const saved = localStorage.getItem('removedTopics');
+    const key = initialPrideMode ? 'removedTopics_pride' : 'removedTopics_career';
+    const saved = localStorage.getItem(key);
     return saved ? JSON.parse(saved) : [];
   });
 
   const [history, setHistory] = useState<Topic[]>(() => {
-    const saved = localStorage.getItem('wheelHistory');
+    const key = initialPrideMode ? 'wheelHistory_pride' : 'wheelHistory_career';
+    const saved = localStorage.getItem(key);
     return saved ? JSON.parse(saved) : [];
   });
 
   // ── Pride Mode ──────────────────────────────────────────────
-  const [prideMode, setPrideMode] = useState<boolean>(() => {
-    return localStorage.getItem('prideMode') === 'true';
-  });
+  const [prideMode, setPrideMode] = useState<boolean>(initialPrideMode);
+
+  // Refs so togglePrideMode always reads current values without stale closures
+  const prideModeRef = useRef(prideMode);
+  prideModeRef.current = prideMode;
+  const segmentsRef = useRef(segments);
+  segmentsRef.current = segments;
+  const historyRef = useRef(history);
+  historyRef.current = history;
+  const removedTopicsRef = useRef(removedTopics);
+  removedTopicsRef.current = removedTopics;
 
   const togglePrideMode = useCallback(() => {
-    setPrideMode(prev => {
-      const next = !prev;
-      if (next) {
-        // Fire rainbow confetti burst when activating
-        const rainbow = ['#E40303', '#FF8C00', '#FFED00', '#008026', '#004DFF', '#750787'];
-        confetti({ particleCount: 160, spread: 120, origin: { y: 0.5 }, colors: rainbow, scalar: 1.3 });
-        setTimeout(() => {
-          confetti({ particleCount: 80, angle: 60, spread: 80, origin: { x: 0, y: 0.5 }, colors: rainbow });
-          confetti({ particleCount: 80, angle: 120, spread: 80, origin: { x: 1, y: 0.5 }, colors: rainbow });
-        }, 300);
-      }
-      return next;
-    });
+    const prev = prideModeRef.current;
+    const next = !prev;
+    const prevSuffix = prev ? 'pride' : 'career';
+    const nextSuffix = next ? 'pride' : 'career';
+
+    if (next) {
+      // Fire rainbow confetti burst when switching to Pride
+      const rainbow = ['#E40303', '#FF8C00', '#FFED00', '#008026', '#004DFF', '#750787'];
+      confetti({ particleCount: 160, spread: 120, origin: { y: 0.5 }, colors: rainbow, scalar: 1.3 });
+      setTimeout(() => {
+        confetti({ particleCount: 80, angle: 60, spread: 80, origin: { x: 0, y: 0.5 }, colors: rainbow });
+        confetti({ particleCount: 80, angle: 120, spread: 80, origin: { x: 1, y: 0.5 }, colors: rainbow });
+      }, 300);
+    }
+
+    // Snapshot the current mode's live state into localStorage before switching
+    localStorage.setItem(`wheelSegments_${prevSuffix}`,  JSON.stringify(segmentsRef.current));
+    localStorage.setItem(`wheelHistory_${prevSuffix}`,   JSON.stringify(historyRef.current));
+    localStorage.setItem(`removedTopics_${prevSuffix}`,  JSON.stringify(removedTopicsRef.current));
+
+    // Load the other mode's persisted state (or empty arrays on first visit)
+    const newSegments = JSON.parse(localStorage.getItem(`wheelSegments_${nextSuffix}`)  || '[]');
+    const newHistory  = JSON.parse(localStorage.getItem(`wheelHistory_${nextSuffix}`)   || '[]');
+    const newRemoved  = JSON.parse(localStorage.getItem(`removedTopics_${nextSuffix}`)  || '[]');
+
+    // React 18 batches all four updates into one re-render
+    setPrideMode(next);
+    setSegments(newSegments);
+    setHistory(newHistory);
+    setRemovedTopics(newRemoved);
   }, []);
   // ────────────────────────────────────────────────────────────
 
+  // Persist to mode-specific keys whenever state or mode changes
   useEffect(() => {
-    localStorage.setItem('wheelSegments', JSON.stringify(segments));
-  }, [segments]);
+    localStorage.setItem(prideMode ? 'wheelSegments_pride' : 'wheelSegments_career', JSON.stringify(segments));
+  }, [segments, prideMode]);
 
   useEffect(() => {
-    localStorage.setItem('wheelHistory', JSON.stringify(history));
-  }, [history]);
+    localStorage.setItem(prideMode ? 'wheelHistory_pride' : 'wheelHistory_career', JSON.stringify(history));
+  }, [history, prideMode]);
 
   useEffect(() => {
-    localStorage.setItem('removedTopics', JSON.stringify(removedTopics));
-  }, [removedTopics]);
+    localStorage.setItem(prideMode ? 'removedTopics_pride' : 'removedTopics_career', JSON.stringify(removedTopics));
+  }, [removedTopics, prideMode]);
 
   useEffect(() => {
     localStorage.setItem('prideMode', String(prideMode));
@@ -201,23 +264,7 @@ function App() {
         >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse" />
           <div className="container mx-auto relative">
-            <Logos prideMode={prideMode} />
-
-            {/* ── 🌈 Pride Mode Toggle Button ── */}
-            <button
-              onClick={togglePrideMode}
-              aria-label={prideMode ? 'Disable Pride Mode' : 'Enable Pride Mode'}
-              className={`
-                fixed right-4 z-[200] px-4 py-2 rounded-2xl text-sm font-extrabold
-                shadow-2xl cursor-pointer select-none
-                ${prideMode ? 'pride-toggle-btn' : 'pride-toggle-btn-off'}
-              `}
-              style={{
-                top: 'clamp(90px, 13vw, 175px)',
-              }}
-            >
-              {prideMode ? '✕ Pride Off' : '🌈 Pride Mode'}
-            </button>
+            <Logos prideMode={prideMode} onToggle={togglePrideMode} />
 
             {/* Title and subtitle: Pride mode vs Normal mode */}
             {prideMode ? (
@@ -310,7 +357,7 @@ function App() {
               <SpinWheel
                 segments={segments}
                 onSpinComplete={handleSpinComplete}
-                LogosComponent={(props: any) => <Logos {...props} prideMode={prideMode} />}
+                LogosComponent={(props: any) => <Logos {...props} prideMode={prideMode} onToggle={togglePrideMode} />}
                 onRepopulateWheel={handleRepopulateWheel}
                 historyCount={history.length}
                 prideMode={prideMode}

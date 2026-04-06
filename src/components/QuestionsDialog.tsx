@@ -18,6 +18,11 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY;
 
 export function QuestionsDialog({ open, onClose, onAddToWheel, prideMode = false }: QuestionsDialogProps) {
+  // ── Supabase table selection ──────────────────────────────────
+  // Career Elevate → 'questions'  |  Pride mode → 'pride_questions'
+  const TABLE = prideMode ? 'pride_questions' : 'questions';
+  // ─────────────────────────────────────────────────────────────
+
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,16 +30,16 @@ export function QuestionsDialog({ open, onClose, onAddToWheel, prideMode = false
   // Add/edit form state
   const [newQuestion, setNewQuestion] = useState('');
   const [newAnswer, setNewAnswer] = useState('');
-  const [newIndex, setNewIndex] = useState(''); // Add index input
+  const [newIndex, setNewIndex] = useState('');
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
   const [editAnswer, setEditAnswer] = useState('');
 
-  // Fetch questions
+  // Fetch questions from the correct table
   const fetchQuestions = () => {
     setLoading(true);
     setError(null);
-    fetch(`${SUPABASE_URL}/rest/v1/questions?select=*`, {
+    fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?select=*`, {
       headers: {
         apikey: SUPABASE_KEY,
         Authorization: `Bearer ${SUPABASE_KEY}`,
@@ -42,7 +47,7 @@ export function QuestionsDialog({ open, onClose, onAddToWheel, prideMode = false
     })
       .then((res) => res.json())
       .then((data) => {
-        setQuestions(data);
+        setQuestions(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch((err) => {
@@ -51,10 +56,11 @@ export function QuestionsDialog({ open, onClose, onAddToWheel, prideMode = false
       });
   };
 
+  // Re-fetch whenever the dialog opens OR the mode changes
   useEffect(() => {
     if (!open) return;
     fetchQuestions();
-  }, [open]);
+  }, [open, TABLE]);
 
   // Add question (POST)
   const handleAddQuestion = async (e: React.FormEvent) => {
@@ -65,14 +71,13 @@ export function QuestionsDialog({ open, onClose, onAddToWheel, prideMode = false
       setError('Please enter a valid index number');
       return;
     }
-    // Check if index already exists
     if (questions.some(q => q.index === indexNum)) {
       setError(`Index #${indexNum} already exists!`);
       return;
     }
     setLoading(true);
     setError(null);
-    await fetch(`${SUPABASE_URL}/rest/v1/questions`, {
+    await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
       method: 'POST',
       headers: {
         apikey: SUPABASE_KEY,
@@ -84,19 +89,18 @@ export function QuestionsDialog({ open, onClose, onAddToWheel, prideMode = false
     });
     setNewQuestion('');
     setNewAnswer('');
-    setNewIndex(''); // Reset index input
+    setNewIndex('');
     fetchQuestions();
   };
 
-  // Edit question (PUT)
+  // Edit question (PATCH)
   const handleEditQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editIndex === null || !editValue.trim()) return;
     setLoading(true);
     setError(null);
-    
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/questions?index=eq.${editIndex}`, {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?index=eq.${editIndex}`, {
         method: 'PATCH',
         headers: {
           apikey: SUPABASE_KEY,
@@ -104,16 +108,12 @@ export function QuestionsDialog({ open, onClose, onAddToWheel, prideMode = false
           'Content-Type': 'application/json',
           Prefer: 'return=representation',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           question: editValue,
-          answers: editAnswer || null  // Use null instead of empty string
+          answers: editAnswer || null,
         }),
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to update question');
-      }
-      
+      if (!response.ok) throw new Error('Failed to update question');
       setEditIndex(null);
       setEditValue('');
       setEditAnswer('');
@@ -129,7 +129,7 @@ export function QuestionsDialog({ open, onClose, onAddToWheel, prideMode = false
   const handleDeleteQuestion = async (index: number) => {
     setLoading(true);
     setError(null);
-    await fetch(`${SUPABASE_URL}/rest/v1/questions?index=eq.${index}`, {
+    await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?index=eq.${index}`, {
       method: 'DELETE',
       headers: {
         apikey: SUPABASE_KEY,
