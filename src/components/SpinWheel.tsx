@@ -43,7 +43,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
   const [selectedSegment, setSelectedSegment] = useState<Topic | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
-  const [countdown, setCountdown] = useState(15); // 15 seconds timer
+  const [countdown, setCountdown] = useState(15); // 15 or 30 seconds timer
   const wheelRef = useRef<HTMLDivElement>(null);
 
   const segmentAngle = segments.length > 0 ? 360 / segments.length : 0;
@@ -136,10 +136,13 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
   // Font size: shrink as segments grow, but keep readable
   const topicFontSize = Math.max(18, 38 - Math.floor(segments.length * 0.7));
 
-  // Auto-close winner overlay after 15 seconds, show answer for 3 seconds before closing
+  // Auto-close winner overlay after 15 or 30 seconds, show answer for 5 seconds before closing
   useEffect(() => {
     if (selectedSegment) {
-      setCountdown(15);
+      // If prideMode, or segment name includes 'realpride', use 30s, else 15s
+      const isRealPride = prideMode || (selectedSegment.name && selectedSegment.name.toLowerCase().includes('realpride'));
+      const initialTime = isRealPride ? 30 : 15;
+      setCountdown(initialTime);
 
       let answerShown = false;
       const countdownInterval = setInterval(() => {
@@ -148,7 +151,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
             clearInterval(countdownInterval);
             setShowAnswer(true);
             answerShown = true;
-            // Show answer for 3 seconds, then close
+            // Show answer for 5 seconds, then close
             setTimeout(() => {
               setSelectedSegment(null);
               setShowAnswer(false);
@@ -165,7 +168,7 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
         if (!answerShown) setShowAnswer(false);
       };
     }
-  }, [selectedSegment]);
+  }, [selectedSegment, prideMode]);
 
   return (
     <div className="flex flex-col items-center gap-8 w-full">
@@ -461,10 +464,10 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                           strokeWidth="6"
                           fill="none"
                           strokeDasharray={176}
-                          strokeDashoffset={176 - (176 * countdown) / 15}
+                          strokeDashoffset={176 - (176 * countdown) / (prideMode || (selectedSegment && selectedSegment.name && selectedSegment.name.toLowerCase().includes('realpride')) ? 30 : 15)}
                           strokeLinecap="round"
                           initial={{ strokeDashoffset: 176 }}
-                          animate={{ strokeDashoffset: 176 - (176 * countdown) / 15 }}
+                          animate={{ strokeDashoffset: 176 - (176 * countdown) / (prideMode || (selectedSegment && selectedSegment.name && selectedSegment.name.toLowerCase().includes('realpride')) ? 30 : 15) }}
                           transition={{ duration: 0.3 }}
                         />
                       </svg>
@@ -641,10 +644,10 @@ export function SpinWheel({ segments, onSpinComplete, LogosComponent, onRepopula
                         strokeWidth="6"
                         fill="none"
                         strokeDasharray={176}
-                        strokeDashoffset={176 - (176 * countdown) / 15}
+                        strokeDashoffset={176 - (176 * countdown) / (prideMode || (selectedSegment && selectedSegment.name && selectedSegment.name.toLowerCase().includes('realpride')) ? 30 : 15)}
                         strokeLinecap="round"
                         initial={{ strokeDashoffset: 176 }}
-                        animate={{ strokeDashoffset: 176 - (176 * countdown) / 15 }}
+                        animate={{ strokeDashoffset: 176 - (176 * countdown) / (prideMode || (selectedSegment && selectedSegment.name && selectedSegment.name.toLowerCase().includes('realpride')) ? 30 : 15) }}
                         transition={{ duration: 0.3 }}
                       />
                     </svg>
